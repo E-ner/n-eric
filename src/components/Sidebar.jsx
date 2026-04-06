@@ -1,7 +1,11 @@
-import { Github, Linkedin, Mail, Sun, Moon } from "lucide-react";
+import { Github, Linkedin, Mail, Sun, Moon, BookOpen } from "lucide-react";
 import { NAV } from "../constants/theme";
+import { Link, useLocation } from "react-router";
 
 export default function Sidebar({ t, dark, setDark, activeSection, scrollTo }) {
+  const location = useLocation();
+  const isBlog = location.pathname === "/blog";
+
   return (
     <aside
       className="desktop-aside fade-in"
@@ -43,6 +47,7 @@ export default function Sidebar({ t, dark, setDark, activeSection, scrollTo }) {
           <br />
           ERIC
         </h1>
+
         <p
           style={{
             fontFamily: "'Syne', sans-serif",
@@ -55,6 +60,7 @@ export default function Sidebar({ t, dark, setDark, activeSection, scrollTo }) {
         >
           Full Stack Developer
         </p>
+
         <p
           style={{
             fontSize: 14,
@@ -77,11 +83,21 @@ export default function Sidebar({ t, dark, setDark, activeSection, scrollTo }) {
             gap: 20,
           }}
         >
+          {/* Blog link — styled like nav-link */}
+          <Link
+            to="/blog"
+            className={`nav-link ${isBlog ? "active" : ""}`}
+            style={{ textDecoration: "none" }}
+          >
+            blog
+          </Link>
+
+          {/* Portfolio section links */}
           {NAV.map((id) => (
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className={`nav-link ${activeSection === id ? "active" : ""}`}
+              className={`nav-link ${activeSection === id && !isBlog ? "active" : ""}`}
             >
               {id}
             </button>

@@ -1,19 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { Routes, Route, useLocation } from "react-router";
-
 import { theme, NAV } from "./constants/theme";
 import { buildCss } from "./constants/styles";
 import Sidebar from "./components/Sidebar";
 import MobileHeader from "./components/MobileHeader";
 import Home from "./pages/Home";
 import ProjectDetail from "./pages/ProjectDetail";
+import Blog from "./pages/Blog"; // ← add this
 
 export default function App() {
   const [dark, setDark] = useState(true);
   const [activeSection, setActiveSection] = useState("about");
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-
   const t = dark ? theme.dark : theme.light;
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -53,12 +52,9 @@ export default function App() {
     };
   }, [updateActive]);
 
-  // Close menu on route change
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
-
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -71,6 +67,8 @@ export default function App() {
   };
 
   if (!mounted) return null;
+
+  const isBlog = location.pathname === "/blog";
 
   return (
     <>
@@ -92,7 +90,6 @@ export default function App() {
           menuOpen={menuOpen}
           setMenuOpen={setMenuOpen}
         />
-
         <div
           className="page-wrapper"
           style={{
@@ -100,18 +97,21 @@ export default function App() {
             margin: "0 auto",
             padding: "0 32px",
             display: "flex",
-            gap: 80,
+            gap: isBlog ? 0 : 80, // ← blog uses its own internal gap
           }}
         >
-          <Sidebar
-            t={t}
-            dark={dark}
-            setDark={setDark}
-            activeSection={activeSection}
-            scrollTo={scrollTo}
-          />
-
+          {/* Hide portfolio sidebar on /blog — blog has its own */}
+          {!isBlog && (
+            <Sidebar
+              t={t}
+              dark={dark}
+              setDark={setDark}
+              activeSection={activeSection}
+              scrollTo={scrollTo}
+            />
+          )}
           <Routes>
+            <Route path="/blog" element={<Blog t={t} dark={dark} />} />
             <Route path="/" element={<Home t={t} dark={dark} />} />
             <Route
               path="/project/:id"
